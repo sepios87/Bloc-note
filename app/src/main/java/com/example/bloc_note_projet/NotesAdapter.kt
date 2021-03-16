@@ -12,6 +12,7 @@ import io.realm.Realm
 import io.realm.RealmResults
 
 class NotesAdapter(private val context: Context?, private val notesList: RealmResults<Notes>) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.notes_rv_layout, parent, false)
         return ViewHolder(v)
@@ -37,7 +38,7 @@ class NotesAdapter(private val context: Context?, private val notesList: RealmRe
 
     }
 
-    class ViewHolder(v: View?): RecyclerView.ViewHolder(v!!){
+    class ViewHolder(v:View?): RecyclerView.ViewHolder(v!!){
         val title = itemView.findViewById<TextView>(R.id.titleTV)
         val desc = itemView.findViewById<TextView>(R.id.descTV)
         val id = itemView.findViewById<TextView>(R.id.idTV)
