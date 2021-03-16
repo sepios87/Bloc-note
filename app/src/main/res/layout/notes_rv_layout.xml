@@ -16,67 +16,51 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/titleTV"
-            android:layout_width="wrap_content"
+            android:id="@+id/titleItem"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="65dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="53dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="60dp"
             android:fontFamily="@font/futuraheavy"
             android:padding="10dp"
             android:text="Titre"
             android:textColor="@color/black"
             android:textSize="24sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/descTV"
-            android:layout_width="wrap_content"
+            android:id="@+id/descItem"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="76dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="1dp"
             android:fontFamily="@font/futurabook"
             android:padding="10dp"
             android:text="test"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/idTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="126dp"
-            android:layout_marginBottom="53dp"
-            android:fontFamily="@font/futurabook"
-
-            android:padding="10dp"
-            android:text="1"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-      
+            app:layout_constraintTop_toBottomOf="@+id/titleItem"
+            app:layout_constraintVertical_bias="0.0" />
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/deleteNotes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="6dp"
-            android:layout_marginBottom="6dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
             android:src="@drawable/ic_delete"
             app:fabSize="mini"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
