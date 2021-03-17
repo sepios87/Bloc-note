@@ -22,7 +22,6 @@ class AddNotesActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_notes)
 
         //init vues
-
         realm = Realm.getDefaultInstance()
         titleEd = findViewById(R.id.title_EditText)
         description = findViewById(R.id.description_EditText)
@@ -43,9 +42,8 @@ class AddNotesActivity : AppCompatActivity() {
             //auto incrément ID
             realm.beginTransaction()
             val currentIdNumber:Number? = realm.where(Notes::class.java).max("id")
-            val nextId:Int
 
-            nextId = if(currentIdNumber == null){
+            val nextId:Int = if(currentIdNumber == null){
                 1
             }else {
                 currentIdNumber.toInt()+1
