@@ -34,15 +34,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         notesRV.layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
-
         getAllNotes()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        notesRV.adapter!!.notifyDataSetChanged()
     }
 
     private fun getAllNotes() {
         notesList = ArrayList()
         val results:RealmResults<Notes> = realm.where<Notes>(Notes::class.java).findAll()
         notesRV.adapter = NotesAdapter(this, results)
-        notesRV.adapter!!.notifyDataSetChanged()
+        //notesRV.adapter!!.notifyDataSetChanged()
     }
 }

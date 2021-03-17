@@ -1,11 +1,15 @@
 package com.example.bloc_note_projet
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintAttribute
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.realm.Realm
@@ -25,13 +29,22 @@ class NotesAdapter(private val context: Context?, private val notesList: RealmRe
 
         holder.itemView.findViewById<TextView>(R.id.titleItem).text = notesList[position]!!.title
         holder.itemView.findViewById<TextView>(R.id.descItem).text = notesList[position]!!.description
-        holder.itemView.findViewById<FloatingActionButton>(R.id.deleteNotes).setOnClickListener(){
+
+        holder.itemView.findViewById<FloatingActionButton>(R.id.deleteNotes).setOnClickListener{
             Toast.makeText(context,"note supprimée", Toast.LENGTH_SHORT).show()
             val realm: Realm = Realm.getDefaultInstance()
             realm.beginTransaction()
             notesList.deleteFromRealm(position)
             realm.commitTransaction()
             notifyDataSetChanged()
+        }
+
+        holder.itemView.findViewById<CardView>(R.id.cardNotes).setOnClickListener{
+            val intent = Intent(context, EditNotesActivity::class.java)
+            intent.putExtra("titre", notesList[position]!!.title.toString())
+            intent.putExtra("description", notesList[position]!!.description.toString())
+            intent.putExtra("index", notesList[position]!!.id)
+            context?.startActivity(intent)
         }
 
     }
