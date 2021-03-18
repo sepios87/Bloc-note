@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Bloc-note-projet</string>
     <string name="button">Button</string>
+    <string name="sauvegarder_note">Sauvegarder note</string>
+    <string name="titre">Titre</string>
+    <string name="description">Description</string>
+    <string name="retour">Retour</string>
 </resources>

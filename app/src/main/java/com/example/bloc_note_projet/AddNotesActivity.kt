@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import com.google.android.material.button.MaterialButton
@@ -26,13 +27,15 @@ class AddNotesActivity : AppCompatActivity() {
         titleEd = findViewById(R.id.title_EditText)
         description = findViewById(R.id.description_EditText)
         saveNoteBtn = findViewById(R.id.saveNotesBtn)
-
-        //onClick
+        val btn_retour = findViewById<Button>(R.id.btn_retour);
 
         saveNoteBtn.setOnClickListener{
             addNotesToDB()
         }
 
+        btn_retour.setOnClickListener{
+            finish()
+        }
     }
 
     private fun addNotesToDB() {

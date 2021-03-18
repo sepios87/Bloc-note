@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
         //ajout du clique du boutton
         addNotes.setOnClickListener{
             startActivity(Intent(this, AddNotesActivity::class.java))
-            finish()
         }
 
         notesRV.layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
