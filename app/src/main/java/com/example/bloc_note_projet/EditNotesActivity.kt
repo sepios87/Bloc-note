@@ -2,6 +2,7 @@ package com.example.bloc_note_projet
 
 import android.os.Bundle
 import android.text.Editable
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +26,7 @@ class EditNotesActivity : AppCompatActivity() {
         titleEd = findViewById(R.id.title_EditText)
         description = findViewById(R.id.description_EditText)
         saveNoteBtn = findViewById(R.id.saveNotesBtn)
+        val btn_retour = findViewById<Button>(R.id.btn_retour);
 
         val intent = intent
         titleEd.text = intent.getStringExtra("titre").toString().toEditable()
@@ -32,6 +34,10 @@ class EditNotesActivity : AppCompatActivity() {
 
         saveNoteBtn.setOnClickListener{
             modif()
+        }
+
+        btn_retour.setOnClickListener{
+            finish()
         }
 
     }
@@ -48,7 +54,7 @@ class EditNotesActivity : AppCompatActivity() {
         note?.description = description.text.toString()
         realm.copyToRealmOrUpdate(note)
         realm.commitTransaction()
-        Toast.makeText(this, note.toString(), Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Modification effectuée", Toast.LENGTH_SHORT).show()
 
         finish()
     }

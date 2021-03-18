@@ -24,7 +24,6 @@
             android:layout_marginEnd="60dp"
             android:fontFamily="@font/futuraheavy"
             android:padding="10dp"
-            android:text="Titre"
             android:textColor="@color/black"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -41,7 +40,6 @@
             android:layout_marginBottom="1dp"
             android:fontFamily="@font/futurabook"
             android:padding="10dp"
-            android:text="test"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -58,9 +56,11 @@
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
             android:src="@drawable/ic_delete"
+            app:backgroundTint="#DC3D73"
             app:fabSize="mini"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
