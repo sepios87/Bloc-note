@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintAttribute
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.realm.Realm
@@ -40,7 +38,7 @@ class NotesAdapter(private val context: Context?, private val notesList: RealmRe
         }
 
         holder.itemView.findViewById<CardView>(R.id.cardNotes).setOnClickListener{
-            val intent = Intent(context, EditNotesActivity::class.java)
+            val intent = Intent(context, EditAndModifNotesActivity::class.java)
             intent.putExtra("titre", notesList[position]!!.title.toString())
             intent.putExtra("description", notesList[position]!!.description.toString())
             intent.putExtra("index", notesList[position]!!.id)
