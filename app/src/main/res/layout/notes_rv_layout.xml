@@ -55,6 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
+            android:contentDescription="@string/delete"
             android:src="@drawable/ic_delete"
             app:backgroundTint="#DC3D73"
             app:fabSize="mini"

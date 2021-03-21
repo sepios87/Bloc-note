@@ -3,7 +3,6 @@ package com.example.bloc_note_projet
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -29,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
         //ajout du clique du boutton
         addNotes.setOnClickListener{
-            startActivity(Intent(this, AddNotesActivity::class.java))
+            startActivity(Intent(this, EditAndModifNotesActivity::class.java))
         }
 
         notesRV.layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)

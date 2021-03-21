@@ -8,6 +8,7 @@
 
     <EditText
         android:id="@+id/title_EditText"
+        android:inputType="text"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_marginStart="50dp"
@@ -34,7 +35,7 @@
         android:layout_marginBottom="100dp"
         android:autofillHints=""
         android:fontFamily="@font/futurabook"
-        android:gravity="top|left"
+        android:gravity="start"
         android:hint="@string/description"
         android:inputType="textMultiLine"
         android:lines="23"
@@ -79,6 +80,21 @@
         app:layout_constraintTop_toTopOf="parent"
         style="?android:attr/borderlessButtonStyle"
         />
+
+    <ImageButton
+        android:id="@+id/btn_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/share"
+        android:minWidth="30dp"
+        android:minHeight="30dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_share"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,7 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Blocnoteprojet">
-        <activity android:name=".EditNotesActivity"></activity>
+        <activity android:name=".EditAndModifNotesActivity"></activity>
         <activity android:name=".AddNotesActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
