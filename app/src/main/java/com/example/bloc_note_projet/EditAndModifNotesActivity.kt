@@ -70,10 +70,7 @@ class EditAndModifNotesActivity : AppCompatActivity() {
         }
 
         lastLength = description.text.length
-        val s = description.text;
-        val content = SpannableString(s)
-        val regex = "(([0123]?[0-9])\\s(janvier|février|fevrier|mars|avril|mai|juin|juillet|aout|août|septembre|octobre|novembre|décembre|decembre)\\s)?(\\d{4}\\s)?([01]?[0-9]|2[0-3])h([0-5][0-9])?".toRegex()
-        val matches = regex.findAll(s)
+        val (content, matches) = matchRegex()
         matches.forEach { f ->
             val m = f.value
             val idx = ((f.range).toString().split(".."))[0]
@@ -87,19 +84,13 @@ class EditAndModifNotesActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable) {}
 
-            override fun beforeTextChanged(s: CharSequence, start: Int,
-                                           count: Int, after: Int) {
-            }
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence, start: Int,
-                                       before: Int, count: Int) {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.length != lastLength) {
                     val position = description.selectionStart
                     lastLength = s.length;
-                    val s = description.text;
-                    val content = SpannableString(s)
-                    val regex = "(([0123]?[0-9])\\s(janvier|février|fevrier|mars|avril|mai|juin|juillet|aout|août|septembre|octobre|novembre|décembre|decembre)\\s)?(\\d{4}\\s)?(([01]?[0-9]|2[0-3])h([0-5][0-9])?)\\s".toRegex()
-                    val matches = regex.findAll(s)
+                    val (content, matches) = matchRegex()
                     matches.forEach { f ->
                         val m = f.value
                         val idx = ((f.range).toString().split(".."))[0]
@@ -109,7 +100,6 @@ class EditAndModifNotesActivity : AppCompatActivity() {
                         realm.beginTransaction()
                         dateNote = realm.where(DateNotes::class.java).equalTo("date", f.value).equalTo("idNote", index).findFirst()
                         realm.commitTransaction()
-                        Log.e("Help", dateNote.toString())
                         if (dateNote == null) {
                             realm.beginTransaction()
                             val currentIdNumber:Number? = realm.where(DateNotes::class.java).max("id")
@@ -126,22 +116,30 @@ class EditAndModifNotesActivity : AppCompatActivity() {
                             builder.setMessage(f.value)
 
                             builder.setPositiveButton(android.R.string.yes) { dialog, which ->
-                                Toast.makeText(applicationContext,
-                                    android.R.string.yes, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(applicationContext, android.R.string.yes, Toast.LENGTH_SHORT).show()
                             }
 
                             builder.setNegativeButton(android.R.string.no) { dialog, which ->
-                                Toast.makeText(applicationContext,
-                                    android.R.string.no, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(applicationContext, android.R.string.no, Toast.LENGTH_SHORT).show()
                             }
                             builder.show()
                         }
+                        description.setText(content)
+                        description.requestFocus()
+                        description.setSelection(position)
                     }
-                    description.setText(content)
-                    description.setSelection(position)
                 }
             }
         })
+    }
+
+    private fun matchRegex(): Pair<SpannableString, Sequence<MatchResult>> {
+        val s = description.text;
+        val content = SpannableString(s)
+        val regex =
+            "(([0123]?[0-9])\\s(janvier|février|fevrier|mars|avril|mai|juin|juillet|aout|août|septembre|octobre|novembre|décembre|decembre)\\s)?(\\d{4}\\s)?([01]?[0-9]|2[0-3])h([0-5][0-9])?".toRegex()
+        val matches = regex.findAll(s)
+        return Pair(content, matches)
     }
 
 
