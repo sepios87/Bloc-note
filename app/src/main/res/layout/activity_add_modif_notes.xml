@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddNotesActivity">
+    tools:context=".EditAndModifNotesActivity">
 
     <EditText
         android:id="@+id/title_EditText"
@@ -46,7 +46,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_EditText"
         app:layout_editor_absoluteX="50dp"
-        app:layout_editor_absoluteY="400dp" />
+        app:layout_editor_absoluteY="400dp">
+        <requestFocus />
+        </EditText>
 
     <Button
         android:id="@+id/saveNotesBtn"

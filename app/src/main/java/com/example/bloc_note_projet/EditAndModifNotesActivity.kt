@@ -41,10 +41,8 @@ class EditAndModifNotesActivity : AppCompatActivity() {
         val intent = intent
         val index = intent.getIntExtra("index", 0)
 
-        var note: Notes? = null
-
         realm.beginTransaction()
-        note = realm.where(Notes::class.java).equalTo("id", index).findFirst()
+        var note: Notes? = realm.where(Notes::class.java).equalTo("id", index).findFirst()
         realm.commitTransaction()
         if (note != null) {
             titleEd.text = intent.getStringExtra("titre").toString().toEditable()
@@ -56,9 +54,7 @@ class EditAndModifNotesActivity : AppCompatActivity() {
             finish()
         }
 
-        btnRetour.setOnClickListener{
-            finish()
-        }
+        btnRetour.setOnClickListener{ finish() }
 
         btnShare.setOnClickListener{
             val shareIntent = Intent()
@@ -70,10 +66,7 @@ class EditAndModifNotesActivity : AppCompatActivity() {
         }
 
         lastLength = description.text.length
-        val s = description.text;
-        val content = SpannableString(s)
-        val regex = "(([0123]?[0-9])\\s(janvier|février|fevrier|mars|avril|mai|juin|juillet|aout|août|septembre|octobre|novembre|décembre|decembre)\\s)?(\\d{4}\\s)?([01]?[0-9]|2[0-3])h([0-5][0-9])?".toRegex()
-        val matches = regex.findAll(s)
+        val (content, matches) = matchRegex()
         matches.forEach { f ->
             val m = f.value
             val idx = ((f.range).toString().split(".."))[0]
@@ -81,67 +74,80 @@ class EditAndModifNotesActivity : AppCompatActivity() {
         }
         description.setText(content)
 
-        val builder = AlertDialog.Builder(this)
-
         description.addTextChangedListener(object: TextWatcher {
 
             override fun afterTextChanged(s: Editable) {}
 
-            override fun beforeTextChanged(s: CharSequence, start: Int,
-                                           count: Int, after: Int) {
-            }
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence, start: Int,
-                                       before: Int, count: Int) {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.length != lastLength) {
                     val position = description.selectionStart
                     lastLength = s.length;
-                    val s = description.text;
-                    val content = SpannableString(s)
-                    val regex = "(([0123]?[0-9])\\s(janvier|février|fevrier|mars|avril|mai|juin|juillet|aout|août|septembre|octobre|novembre|décembre|decembre)\\s)?(\\d{4}\\s)?(([01]?[0-9]|2[0-3])h([0-5][0-9])?)\\s".toRegex()
-                    val matches = regex.findAll(s)
+                    val (content, matches) = matchRegex()
                     matches.forEach { f ->
-                        val m = f.value
+                        val dateHeure = f.value
                         val idx = ((f.range).toString().split(".."))[0]
-                        content.setSpan(UnderlineSpan(), idx.toInt(), idx.toInt() + m.length, 0)
+                        content.setSpan(UnderlineSpan(), idx.toInt(), idx.toInt() + dateHeure.length, 0)
 
-                        var dateNote: DateNotes? = null
                         realm.beginTransaction()
-                        dateNote = realm.where(DateNotes::class.java).equalTo("date", f.value).equalTo("idNote", index).findFirst()
+                        val dateNote: DateNotes? = realm.where(DateNotes::class.java).equalTo("date", f.value).equalTo("idNote", index).findFirst()
                         realm.commitTransaction()
-                        Log.e("Help", dateNote.toString())
+
                         if (dateNote == null) {
-                            realm.beginTransaction()
-                            val currentIdNumber:Number? = realm.where(DateNotes::class.java).max("id")
-                            val nextId:Int = if (currentIdNumber == null) 1; else currentIdNumber.toInt()+1
-
-                            val dateNote = DateNotes()
-                            dateNote.date = f.value
-                            dateNote.idNote = index
-                            dateNote.id = nextId
-                            realm.copyToRealmOrUpdate(dateNote)
-                            realm.commitTransaction()
-
-                            builder.setTitle("Voulez-vous rajouter cette alarme ?")
-                            builder.setMessage(f.value)
-
-                            builder.setPositiveButton(android.R.string.yes) { dialog, which ->
-                                Toast.makeText(applicationContext,
-                                    android.R.string.yes, Toast.LENGTH_SHORT).show()
-                            }
-
-                            builder.setNegativeButton(android.R.string.no) { dialog, which ->
-                                Toast.makeText(applicationContext,
-                                    android.R.string.no, Toast.LENGTH_SHORT).show()
-                            }
-                            builder.show()
+                            addNoteDateToBD(dateHeure, index)
+                            popUp(dateHeure)
                         }
+
+                        description.setText(content)
+                        description.requestFocus()
+                        description.setSelection(position)
                     }
-                    description.setText(content)
-                    description.setSelection(position)
                 }
             }
         })
+    }
+
+    private fun popUp(dateHeure : String){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Voulez-vous rajouter cette alarme ?")
+        builder.setMessage(dateHeure)
+
+        builder.setPositiveButton(android.R.string.ok) { dialog, which ->
+            Toast.makeText(applicationContext, "Alarme ajoutée", Toast.LENGTH_SHORT).show()
+        }
+
+        builder.setNegativeButton(android.R.string.cancel) { dialog, which ->
+            Toast.makeText(applicationContext, "L'alarme n'as pas été ajoutée", Toast.LENGTH_SHORT).show()
+        }
+
+        builder.show()
+    }
+
+    private fun addNoteDateToBD(value : String, index : Int){
+        try{
+        realm.beginTransaction()
+        val currentIdNumber:Number? = realm.where(DateNotes::class.java).max("id")
+        val nextId:Int = if (currentIdNumber == null) 1; else currentIdNumber.toInt()+1
+
+        val dateNote = DateNotes()
+        dateNote.date = value
+        dateNote.idNote = index
+        dateNote.id = nextId
+        realm.copyToRealmOrUpdate(dateNote)
+        realm.commitTransaction()
+        }catch (exception:Exception){
+            Toast.makeText(this, "L'ajout de la note a échouée", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun matchRegex(): Pair<SpannableString, Sequence<MatchResult>> {
+        val s = description.text;
+        val content = SpannableString(s)
+        val regex =
+            "(([0123]?[0-9])\\s(janvier|février|fevrier|mars|avril|mai|juin|juillet|aout|août|septembre|octobre|novembre|décembre|decembre)\\s)?(\\d{4}\\s)?([01]?[0-9]|2[0-3])h([0-5][0-9])?".toRegex()
+        val matches = regex.findAll(s)
+        return Pair(content, matches)
     }
 
 
@@ -149,8 +155,8 @@ class EditAndModifNotesActivity : AppCompatActivity() {
         try{
             realm.beginTransaction()
 
-            note?.title = titleEd.text.toString()
-            note?.description = description.text.toString()
+            note.title = titleEd.text.toString()
+            note.description = description.text.toString()
 
             realm.copyToRealmOrUpdate(note)
             realm.commitTransaction()
@@ -161,10 +167,8 @@ class EditAndModifNotesActivity : AppCompatActivity() {
     }
 
     private fun addNotesToDB() {
-
         try{
             realm.beginTransaction()
-
             //auto incrément ID
             val currentIdNumber:Number? = realm.where(Notes::class.java).max("id")
             val nextId:Int = if (currentIdNumber == null) 1; else currentIdNumber.toInt()+1
@@ -173,16 +177,12 @@ class EditAndModifNotesActivity : AppCompatActivity() {
             notes.title = titleEd.text.toString()
             notes.description = description.text.toString()
             notes.id = nextId
-
             //copier la transaction et envoyer
             realm.copyToRealmOrUpdate(notes)
             realm.commitTransaction()
-
             Toast.makeText(this, "La note a été ajoutée", Toast.LENGTH_SHORT).show()
-
         }catch (exception:Exception){
             Toast.makeText(this, "L'ajout de la note a échouée", Toast.LENGTH_SHORT).show()
         }
-
     }
 }
