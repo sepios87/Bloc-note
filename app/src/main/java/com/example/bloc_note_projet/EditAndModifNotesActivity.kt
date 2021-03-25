@@ -2,6 +2,7 @@ package com.example.bloc_note_projet
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.AlarmClock
 import android.text.Editable
 import android.text.SpannableString
 import android.text.TextWatcher
@@ -17,6 +18,7 @@ import com.google.android.material.button.MaterialButton
 import io.realm.Realm
 import io.realm.RealmList
 import io.realm.RealmQuery
+import java.util.*
 
 class EditAndModifNotesActivity : AppCompatActivity() {
 
@@ -112,9 +114,25 @@ class EditAndModifNotesActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Voulez-vous rajouter cette alarme ?")
         builder.setMessage(dateHeure)
-
         builder.setPositiveButton(android.R.string.ok) { dialog, which ->
-            Toast.makeText(applicationContext, "Alarme ajoutée", Toast.LENGTH_SHORT).show()
+
+            // Récupération de l'heure :
+            val regex ="([01]?[0-9]|2[0-3])h(([0-5][0-9])?)".toRegex()
+            val matches = regex.find(dateHeure, 0)!!.value
+            Log.e("message", dateHeure)
+            Log.e("message", matches)
+            var hourmin = matches.split("h").toTypedArray()
+            Log.e("message", Arrays.toString(hourmin))
+            if(hourmin.size ==2){
+                if ( hourmin[1].toString() == "") {
+                    setAlarm(hourmin[0].toInt(), 0, titleEd.text.toString())
+                    Toast.makeText(applicationContext, "Alarme ajoutée à "+hourmin[0].toInt()+"h00 " + dateHeure, Toast.LENGTH_SHORT).show()
+                } else {
+                    setAlarm(hourmin[0].toInt(), hourmin[1].toInt(), titleEd.text.toString())
+                    Toast.makeText(applicationContext, "Alarme ajoutée à "+hourmin[0].toInt()+"h"+hourmin[1].toInt(), Toast.LENGTH_SHORT).show()
+                }
+            }
+
         }
 
         builder.setNegativeButton(android.R.string.cancel) { dialog, which ->
@@ -124,18 +142,34 @@ class EditAndModifNotesActivity : AppCompatActivity() {
         builder.show()
     }
 
+    // Fonction qui rajoute une alarme en allant chercher directement le composant
+    fun setAlarm(hour : Int, minute : Int, titre : String){
+        val intent : Intent = Intent(AlarmClock.ACTION_SET_ALARM);
+        intent.putExtra(AlarmClock.EXTRA_HOUR, hour)
+        intent.putExtra(AlarmClock.EXTRA_MINUTES, minute)
+
+        // optionnel, je le désactive pour le moment
+        // intent.putExtra(AlarmClock.EXTRA_DAYS, day)
+
+        intent.putExtra(AlarmClock.EXTRA_MESSAGE, titre) // A définir avec le titre de la note
+
+        if (hour <= 24 && minute <= 60) {
+            startActivity(intent);
+        }
+    }
+
     private fun addNoteDateToBD(value : String, index : Int){
         try{
-        realm.beginTransaction()
-        val currentIdNumber:Number? = realm.where(DateNotes::class.java).max("id")
-        val nextId:Int = if (currentIdNumber == null) 1; else currentIdNumber.toInt()+1
+            realm.beginTransaction()
+            val currentIdNumber:Number? = realm.where(DateNotes::class.java).max("id")
+            val nextId:Int = if (currentIdNumber == null) 1; else currentIdNumber.toInt()+1
 
-        val dateNote = DateNotes()
-        dateNote.date = value
-        dateNote.idNote = index
-        dateNote.id = nextId
-        realm.copyToRealmOrUpdate(dateNote)
-        realm.commitTransaction()
+            val dateNote = DateNotes()
+            dateNote.date = value
+            dateNote.idNote = index
+            dateNote.id = nextId
+            realm.copyToRealmOrUpdate(dateNote)
+            realm.commitTransaction()
         }catch (exception:Exception){
             Toast.makeText(this, "L'ajout de la note a échouée", Toast.LENGTH_SHORT).show()
         }
@@ -149,7 +183,6 @@ class EditAndModifNotesActivity : AppCompatActivity() {
         val matches = regex.findAll(s)
         return Pair(content, matches)
     }
-
 
     private fun modifNotesToBD(note:Notes){
         try{
