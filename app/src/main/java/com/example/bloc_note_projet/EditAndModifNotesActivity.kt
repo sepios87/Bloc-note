@@ -2,11 +2,11 @@ package com.example.bloc_note_projet
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.AlarmClock
 import android.text.Editable
 import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.UnderlineSpan
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -15,8 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
 import io.realm.Realm
-import io.realm.RealmList
-import io.realm.RealmQuery
+import java.util.*
 
 class EditAndModifNotesActivity : AppCompatActivity() {
 
@@ -112,30 +111,80 @@ class EditAndModifNotesActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Voulez-vous rajouter cette alarme ?")
         builder.setMessage(dateHeure)
+        builder.setPositiveButton(android.R.string.ok) { _, _ ->
+        var days = -1
+            // Récupération du jour :
+            val dayregex = "(Lundi|lundi|Mardi|mardi|Mercredi|mercredi|Jeudi|jeudi|Vendredi|vendredi|Samedi|samedi|Dimanche|dimanche)".toRegex()
+            val hasDay = dayregex.containsMatchIn(dateHeure)
+            if (hasDay){
+                days = convertDays(dayregex.find(dateHeure, 0)!!.value.toLowerCase())
+            }
+            // Récupération de l'heure :
+            val timeregex ="([01]?[0-9]|2[0-3])h(([0-5][0-9])?)".toRegex()
+            val matches = timeregex.find(dateHeure, 0)!!.value
+            var hourmin = matches.split("h").toTypedArray()
+            if(hourmin.size ==2){
+                if ( hourmin[1].toString() == "") {
+                    setAlarm(hourmin[0].toInt(), 0, titleEd.text.toString(), days)
+                    Toast.makeText(applicationContext, "Alarme ajoutée à "+hourmin[0].toInt()+"h00 " + dateHeure, Toast.LENGTH_SHORT).show()
+                } else {
+                    setAlarm(hourmin[0].toInt(), hourmin[1].toInt(), titleEd.text.toString(), days)
+                    Toast.makeText(applicationContext, "Alarme ajoutée à "+hourmin[0].toInt()+"h"+hourmin[1].toInt(), Toast.LENGTH_SHORT).show()
+                }
+            }
 
-        builder.setPositiveButton(android.R.string.ok) { dialog, which ->
-            Toast.makeText(applicationContext, "Alarme ajoutée", Toast.LENGTH_SHORT).show()
         }
 
-        builder.setNegativeButton(android.R.string.cancel) { dialog, which ->
+        builder.setNegativeButton(android.R.string.cancel) { _, _ ->
             Toast.makeText(applicationContext, "L'alarme n'as pas été ajoutée", Toast.LENGTH_SHORT).show()
         }
 
         builder.show()
     }
 
+    fun convertDays(day : String): Int {
+        when (day) {
+            "lundi" -> return Calendar.MONDAY
+            "mardi" -> return Calendar.TUESDAY
+            "mercredi" -> return Calendar.WEDNESDAY
+            "jeudi" -> return Calendar.THURSDAY
+            "vendredi" -> return Calendar.FRIDAY
+            "samedi" -> return Calendar.SATURDAY
+            "dimanche" -> return Calendar.SUNDAY
+            else -> { // En cas d'erreur / impossible mais on sait jamais
+                print("Y'a erreur là non ?")
+                return -1
+            }
+        }
+    }
+
+    // Fonction qui rajoute une alarme en allant chercher directement le composant
+    fun setAlarm(hour : Int, minute : Int, titre : String, day : Int){
+        val intent : Intent = Intent(AlarmClock.ACTION_SET_ALARM);
+        intent.putExtra(AlarmClock.EXTRA_HOUR, hour)
+        intent.putExtra(AlarmClock.EXTRA_MINUTES, minute)
+        if (day == -1){
+            intent.putExtra(AlarmClock.EXTRA_DAYS, Calendar.SUNDAY)
+        }
+        intent.putExtra(AlarmClock.EXTRA_MESSAGE, titre) // A définir avec le titre de la note
+
+        if (hour <= 24 && minute <= 60) {
+            startActivity(intent);
+        }
+    }
+
     private fun addNoteDateToBD(value : String, index : Int){
         try{
-        realm.beginTransaction()
-        val currentIdNumber:Number? = realm.where(DateNotes::class.java).max("id")
-        val nextId:Int = if (currentIdNumber == null) 1; else currentIdNumber.toInt()+1
+            realm.beginTransaction()
+            val currentIdNumber:Number? = realm.where(DateNotes::class.java).max("id")
+            val nextId:Int = if (currentIdNumber == null) 1; else currentIdNumber.toInt()+1
 
-        val dateNote = DateNotes()
-        dateNote.date = value
-        dateNote.idNote = index
-        dateNote.id = nextId
-        realm.copyToRealmOrUpdate(dateNote)
-        realm.commitTransaction()
+            val dateNote = DateNotes()
+            dateNote.date = value
+            dateNote.idNote = index
+            dateNote.id = nextId
+            realm.copyToRealmOrUpdate(dateNote)
+            realm.commitTransaction()
         }catch (exception:Exception){
             Toast.makeText(this, "L'ajout de la note a échouée", Toast.LENGTH_SHORT).show()
         }
@@ -145,11 +194,10 @@ class EditAndModifNotesActivity : AppCompatActivity() {
         val s = description.text;
         val content = SpannableString(s)
         val regex =
-            "(([0123]?[0-9])\\s(janvier|février|fevrier|mars|avril|mai|juin|juillet|aout|août|septembre|octobre|novembre|décembre|decembre)\\s)?(\\d{4}\\s)?([01]?[0-9]|2[0-3])h([0-5][0-9])?".toRegex()
+            "((Lundi|lundi|Mardi|mardi|Mercredi|mercredi|Jeudi|jeudi|Vendredi|vendredi|Samedi|samedi|Dimanche|dimanche)\\s)?([01]?[0-9]|2[0-3])h(([0-5][0-9])?)".toRegex()
         val matches = regex.findAll(s)
         return Pair(content, matches)
     }
-
 
     private fun modifNotesToBD(note:Notes){
         try{
