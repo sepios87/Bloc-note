@@ -8,4 +8,5 @@
     <string name="share">share</string>
     <string name="add">add</string>
     <string name="delete">delete</string>
+    <string name="search">Search</string>
 </resources>
