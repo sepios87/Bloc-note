@@ -13,7 +13,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.realm.Realm
 import io.realm.RealmResults
 
-class NotesAdapter(private val context: Context?, private val notesList: RealmResults<Notes>) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+class NotesAdapter(private val context: Context?, private val notesList: ArrayList<Notes>) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.notes_rv_layout, parent, false)
         return ViewHolder(v)
@@ -32,8 +32,10 @@ class NotesAdapter(private val context: Context?, private val notesList: RealmRe
             Toast.makeText(context,"note supprimée", Toast.LENGTH_SHORT).show()
             val realm: Realm = Realm.getDefaultInstance()
             realm.beginTransaction()
-            notesList.deleteFromRealm(position)
+            val result= realm.where<Notes>(Notes::class.java).findAll()
+            result.deleteFromRealm(position)
             realm.commitTransaction()
+            notesList.removeAt(position)
             notifyDataSetChanged()
         }
 
