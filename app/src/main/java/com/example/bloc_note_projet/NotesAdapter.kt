@@ -34,9 +34,8 @@ class NotesAdapter(private val context: Context?, private val notesList: ArrayLi
             realm.beginTransaction()
             val result= realm.where<Notes>(Notes::class.java).findAll()
             result.deleteFromRealm(position)
-            notesList.clear()
-            notesList.addAll(result)
             realm.commitTransaction()
+            notesList.removeAt(position)
             notifyDataSetChanged()
         }
 

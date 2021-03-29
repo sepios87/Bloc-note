@@ -1,10 +1,8 @@
 package com.example.bloc_note_projet
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,7 +12,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.realm.Case
 import io.realm.Realm
 import io.realm.RealmResults
-import android.widget.SearchView
+import androidx.appcompat.widget.SearchView
 
 class MainActivity : AppCompatActivity() {
 
@@ -65,10 +63,6 @@ class MainActivity : AppCompatActivity() {
         })
 
         return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onResume() {

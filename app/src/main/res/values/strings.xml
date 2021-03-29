@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Bloc-note-projet</string>
+    <string name="app_name">Notes</string>
     <string name="button">Button</string>
     <string name="sauvegarder_note">Sauvegarder note</string>
     <string name="titre">Titre</string>
