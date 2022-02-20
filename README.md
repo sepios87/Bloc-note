@@ -2,7 +2,7 @@
 
 Bloc note créé pour générer des alarmes quand on écrit une nouvelle note.
 
-<div style="display: flex; justify-content: space-arround;">
+<div style="display: flex; justify-content: space-around;">
   
 <img src="https://github.com/sepios87/Bloc-note/blob/main/screenHome.png" alt="image rendu">
 
